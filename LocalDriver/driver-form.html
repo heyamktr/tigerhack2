@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Set Up Your Driver Account</h2>
+        <form id="driver-form">
+            <div class="form-group">
+                <label for="driverName">Driver Name:</label>
+                <input type="text" id="driverName" name="driverName" required>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="car">Car (Make/Model):</label>
+                <input type="text" id="car" name="car" required>
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacity (No. of Passengers):</label>
+                <input type="number" id="capacity" name="capacity" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="available">Available:</label>
+                <input type="checkbox" id="available" name="available">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div id="driver-list"></div>
+
+    <script src="LocalDriver.js"></script>
+    <script src="DriverQueue.js"></script>
+    <script src="DriverController.js"></script>
+    <script>
+        // Initialize DriverQueue and DriverController
+        const driverQueue = new DriverQueue();
+        const driverController = new DriverController(driverQueue);
+        
+        // Load drivers from localStorage when the page loads
+        driverController.loadDriversFromLocalStorage();
+    </script>
+    <a href="driver-list.html">Driver List</a>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('tripconfirmation.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .header nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .header nav a:hover {
+            color: #FFD700;
+        }
+
+        /* Container Styles */
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #4CAF50;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[type="text"] {
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #ff6f61;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const finishTripBtn = document.getElementById("finishTripBtn");
+            const driverCodeInput = document.getElementById("driverCodeInput");
+            const feedbackElement = document.getElementById("feedback");
+            const outOfWorkBtn = document.getElementById("out-of-work-btn");
+            let isDriverVerified = false;
+            let driverCode = "";
+
+            // Function to verify driver code
+            const verifyDriverCode = (code) => {
+                feedbackElement.textContent = "Verifying driver code...";
+                fetch("/verify-driver-code", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        driverCode: code,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        isDriverVerified = true;
+                        driverCode = code;
+                        feedbackElement.textContent = "Driver code verified. You can now finish the trip.";
+                        finishTripBtn.disabled = false;  // Enable "Finish Trip" button
+                    } else {
+                        feedbackElement.textContent = data.message;
+                        finishTripBtn.disabled = true;  // Disable "Finish Trip" button
+                    }
+                })
+                .catch(error => {
+                    console.error("Error verifying driver code:", error);
+                    feedbackElement.textContent = "Error verifying driver code. Please try again.";
+                });
+            };
+
+            // Event listener for when the driver code is entered
+            driverCodeInput.addEventListener("input", function() {
+                const code = driverCodeInput.value.trim();
+                if (code && !isDriverVerified) {
+                    // Verify the driver code only once
+                    verifyDriverCode(code);
+                } else if (!code) {
+                    finishTripBtn.disabled = true;
+                    feedbackElement.textContent = "Please enter a driver code.";
+                }
+            });
+
+            // Event listener for the "Finish Trip" button
+            finishTripBtn.addEventListener("click", function() {
+                if (!isDriverVerified || !driverCode) {
+                    alert("Please verify your driver code.");
+                    return;
+                }
+
+                // Send request to finish the trip and re-add the driver to the available list
+                fetch("/finish-trip", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        driverCode: driverCode,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Success message
+                        feedbackElement.textContent = "Trip completed successfully.";
+                        finishTripBtn.disabled = true;  // Disable button after completion
+                        driverCodeInput.value = ""; // Clear input
+                        outOfWorkBtn.style.display = "block";  // Show "Out of Work" button after trip is finished
+                    } else {
+                        feedbackElement.textContent = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error finishing trip:", error);
+                    feedbackElement.textContent = "Error finishing trip. Please try again.";
+                });
+            });
+
+            // Event listener for the "Out of Work" button
+            // Event listener for the "Out of Work" button
+outOfWorkBtn.addEventListener("click", () => {
+    const driverCode = driverCodeInput.value.trim();
+
+    if (!driverCode) {
+        alert("Please enter your driver code.");
+        return;
+    }
+
+    // First, verify the driver code
+    fetch("/verify-driver-code", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ driverCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If the driver code is verified, proceed with removing the driver from the available list
+            fetch("/out-of-work", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ driverCode })
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert(data.message);
+                    outOfWorkBtn.style.display = "none";  // Hide the "Out of Work" button after successful action
+                    finishTripBtn.disabled = true; // Disable Finish Trip button if they are out of work
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error marking driver as out of work:", error);
+                alert("Error marking driver as out of work.");
+            });
+        } else {
+            alert(data.message); // If driver code verification fails
+        }
+    })
+    .catch((error) => {
+        console.error("Error verifying driver code:", error);
+        alert("Error verifying driver code.");
+    });
+    });
+
+        });
+    </script>    
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <nav>
+            <a href="#">DePauw University</a>
+            <a href="#">Home</a>
+            <a href="#">Travel</a>
+            <a href="#">Carpool</a>
+            <a href="#">Bike Rental</a>
+            <a href="#">Car Booking</a>
+            <a href="#">Other Information</a>
+        </nav>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <h1>Trip Confirmation</h1>
+        <p>Enter your driver code below and click "Finish Trip" when you're done.</p>
+        <div class="input-group">
+            <input type="text" id="driverCodeInput" placeholder="Driver Code" />
+            <button id="finishTripBtn" disabled>Finish Trip</button>
+            <button id="out-of-work-btn" style="display: none;">Out of Work</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+</body>
+</html>

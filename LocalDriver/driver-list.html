@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>List of Drivers</h2>
+    <div id="driver-list"></div>
+
+    <script src="LocalDriver.js"></script>
+    <script src="DriverQueue.js"></script>
+    <script src="DriverController.js"></script>
+    <script>
+        // Initialize DriverQueue and DriverController
+        // Retrieve drivers from localStorage
+        const driversList = JSON.parse(localStorage.getItem("driversList")) || [];
+
+        // Get the container where the list will be displayed
+        const driverContainer = document.getElementById("driver-list");
+
+        // Build HTML for the driver list
+        driverContainer.innerHTML = driversList.map(driver => `
+        <div>
+            <p><strong>Name:</strong> ${driver.name}</p>
+            <p><strong>Phone:</strong> ${driver.phoneNumber}</p>
+            <p><strong>Car:</strong> ${driver.car}</p>
+            <p><strong>Capacity:</strong> ${driver.capacity}</p>
+            <p><strong>Available:</strong> ${driver.available ? "Yes" : "No"}</p>
+            <hr>
+        </div>
+        `).join('');
+
+    </script>
+</body>
+</html>

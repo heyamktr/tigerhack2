@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('ruraltransit2.png'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .nav-buttons {
+            margin-top: 5px;
+            display: flex;
+            justify-content: center; /* Center align the buttons */
+            gap: 8px; /* Add space between buttons */
+        }
+
+        .nav-buttons button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 8px; /* Smaller padding */
+            width: 70px; /* Fixed width to shorten buttons */
+            cursor: pointer;
+            font-size: 12px; /* Smaller font size */
+            text-align: center; /* Ensure button text is centered */
+        }
+
+        .nav-buttons button:hover {
+            background-color: #555;
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 120px; /* Adjust for header */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input, button {
+            width: 100%; /* Ensure both input and button align */
+            box-sizing: border-box; /* Include padding in the width */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to the Driver Sign-Up Portal</h1>
+        <div class="nav-buttons">
+            <button onclick="location.href='#'">Home</button>
+            <button onclick="location.href='#'">About</button>
+            <button onclick="location.href='#'">Contact</button>
+            <button onclick="location.href='#'">Help</button>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <h1>Driver Login</h1>
+        <form id="loginForm">
+            <label for="uniqueCode">Enter Unique Code:</label>
+            <input type="text" id="uniqueCode" name="uniqueCode" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const uniqueCode = document.getElementById("uniqueCode").value;
+
+            const response = await fetch("/driver-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ uniqueCode }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Redirect to the dashboard page with driver details
+                window.location.href = `/dashboard.html?uniqueCode=${uniqueCode}`;
+            } else {
+                document.getElementById("message").innerText = data.message;
+            }
+        });
+    </script>
+</body>
+</html>

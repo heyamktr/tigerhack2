@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Passenger Matching</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('backgroun.png'); /* Replace with the correct image path */
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            background-color: #444;
+            border-radius: 5px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto; /* Add top margin to account for navbar */
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black for readability */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0; /* Added margin for spacing */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .match-list .match-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: black;
+            border-radius: 5px;
+        }
+
+        .success-message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="#">DePauw University</a>
+        <a href="#">Passenger</a>
+        <a href="#">Student Drivers</a>
+        <a href="#">Bike Rental</a>
+        <a href="#">Car Booking</a>
+        <a href="#">Other Information</a>
+    </div>
+
+    <div class="container">
+        <h1>Driver Passenger Matching</h1>
+
+        <div id="verify-section">
+            <h2>Verify Driver</h2>
+            <label for="studentId">Enter Student ID:</label>
+            <input type="text" id="studentId" placeholder="Enter your Student ID">
+            <button id="verifyDriverBtn">Verify</button>
+            <p id="verifyMessage"></p>
+        </div>
+
+        <div id="match-section" class="hidden">
+            <h2>Matching Passengers</h2>
+            <button id="getMatchesBtn">Get Matching Passengers</button>
+            <div id="matchesContainer" class="match-list"></div>
+            <button id="submitSelectionBtn">Submit Selection</button>
+        </div>
+
+        <div id="successMessage" class="success-message hidden"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const studentIdInput = document.getElementById('studentId');
+            const verifyDriverBtn = document.getElementById('verifyDriverBtn');
+            const verifyMessage = document.getElementById('verifyMessage');
+            const matchSection = document.getElementById('match-section');
+            const getMatchesBtn = document.getElementById('getMatchesBtn');
+            const matchesContainer = document.getElementById('matchesContainer');
+            const submitSelectionBtn = document.getElementById('submitSelectionBtn');
+            const successMessage = document.getElementById('successMessage');
+
+            let verifiedStudentId = null;
+            let selectedPassengername = null; // Store the selected passenger's name
+
+            // Verify Driver
+            verifyDriverBtn.addEventListener('click', async () => {
+                const studentId = studentIdInput.value;
+                if (!studentId) {
+                    verifyMessage.textContent = 'Please enter a Student ID.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/verifyDriver?studentId=${studentId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        verifiedStudentId = studentId;
+                        verifyMessage.textContent = 'Driver verified successfully!';
+                        matchSection.classList.remove('hidden');
+                    } else {
+                        verifyMessage.textContent = data.error || 'Verification failed.';
+                    }
+                } catch (error) {
+                    console.error('Error verifying driver:', error);
+                    verifyMessage.textContent = 'An error occurred during verification.';
+                }
+            });
+
+            // Fetch Matching Passengers
+            getMatchesBtn.addEventListener('click', async () => {
+                if (!verifiedStudentId) {
+                    alert('Please verify your Student ID first.');
+                    return;
+                }
+
+                matchesContainer.innerHTML = '<p>Loading matches...</p>';
+
+                try {
+                    const response = await fetch(`/getMatchingPassengers?studentId=${verifiedStudentId}`);
+                    const data = await response.json();
+
+                    if (response.status === 404) {
+                        matchesContainer.innerHTML = '<p>No matching passengers found.</p>';
+                        return;
+                    }
+
+                    matchesContainer.innerHTML = '';
+                    data.forEach(passenger => {
+                        const matchItem = document.createElement('div');
+                        matchItem.classList.add('match-item');
+
+                        matchItem.innerHTML = `
+                            <input type="radio" name="passenger" value="${passenger.passengerName}" id="passenger_${passenger.passengerName}">
+                            <label for="passenger_${passenger.passengerName}">
+                                <p><strong>Name:</strong> ${passenger.passengerName}</p>
+                                <p><strong>Pickup Location:</strong> ${passenger.pickupLocation}</p>
+                                <p><strong>Destination:</strong> ${passenger.destination}</p>
+                                <p><strong>Scheduled Time:</strong> ${passenger.scheduledTime}</p>
+                                <p><strong>Return Time:</strong> ${passenger.returnTime}</p>
+                                <p><strong>Trip Type:</strong> ${passenger.tripType}</p>
+                            </label>
+                        `;
+
+                        // Add event listener for selection
+                        matchItem.querySelector('input').addEventListener('change', (event) => {
+                            selectedPassengername = event.target.value; // Set selected passenger name
+                            console.log(`Selected Passenger: ${selectedPassengername}`);
+                        });
+
+                        matchesContainer.appendChild(matchItem);
+                    });
+                } catch (error) {
+                    console.error('Error fetching matches:', error);
+                    matchesContainer.innerHTML = '<p>An error occurred while fetching matches.</p>';
+                }
+            });
+
+            // Handle submit button click for passenger selection
+            submitSelectionBtn.addEventListener('click', async () => {
+                if (!selectedPassengername) {
+                    alert('Please select a passenger.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/submitSelection', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            studentId: verifiedStudentId,
+                            passengers: [selectedPassengername], // Send the selected passenger's name
+                        }),
+                    });
+
+                    const result = await response.json();
+                    successMessage.textContent = result.message || 'Selection submitted successfully!';
+                    successMessage.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error submitting selection:', error);
+                    successMessage.textContent = 'An error occurred while submitting the selection.';
+                    successMessage.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
