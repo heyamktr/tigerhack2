@@ -1,0 +1,11 @@
+ID,AVAILABLE,RETURN_TIME,name,studentid,studentemail
+1,true,,,,
+2,false,2024-11-21T16:33:09.090Z,Bob,12345,a@gmail.com
+3,true,,,,
+4,false,2024-11-21T16:51:29.026Z,Bob,12345,a@gmail.com
+5,false,2024-11-21T16:58:45.332Z,Bob,12345,a@gmail.com
+6,false,2024-11-21T17:05:36.918Z,Bob,12345,a@gmail.com
+7,true,,,,
+8,true,,,,
+9,true,,,,
+10,true,,,,

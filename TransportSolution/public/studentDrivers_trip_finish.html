@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Finish</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('ruraltransit3.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .header nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .header nav a:hover {
+            color: #4CAF50;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin-top: 100px; /* To prevent overlap with the fixed header */
+        }
+        h1 {
+            font-size: 1.8rem;
+            color: #4CAF50;
+        }
+        p {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px); /* Match button width */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+        .feedback {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #ff6f61;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav>
+            <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
+            <a href="passenger.html">PASSENGER</a>
+            <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+            <a href="bicycle_rental.html">BIKE RENTAL</a>
+            <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+            <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+            <a href="ruraltransit.html">RURAL TRANSIT</a>
+            <a href="otherinformation.html">OTHER INFORMATION</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h1>Trip Confirmation</h1>
+        <p>Enter your driver ID below and click "Finish Trip" when you're done.</p>
+        
+        <!-- Driver ID Input -->
+        <label for="driverIdInput">Enter Driver ID:</label>
+        <input type="text" id="driverIdInput" placeholder="Driver ID" />
+
+        <!-- Feedback Message -->
+        <div id="feedback" class="feedback"></div>
+
+        <!-- Finish Trip Button -->
+        <button id="finishTripBtn" disabled>Finish Trip</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const finishTripBtn = document.getElementById("finishTripBtn");
+            const driverIdInput = document.getElementById("driverIdInput");
+            const feedbackElement = document.getElementById("feedback");
+
+            // Function to verify driver ID
+            const verifyDriverId = (driverId) => {
+                feedbackElement.textContent = "Verifying driver ID...";
+                fetch("/verify-driver-code", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        driverId: driverId,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        feedbackElement.textContent = "Driver ID verified. You can finish the trip.";
+                        finishTripBtn.disabled = false;  // Enable "Finish Trip" button
+                    } else {
+                        feedbackElement.textContent = data.message;
+                        finishTripBtn.disabled = true;  // Disable "Finish Trip" button
+                    }
+                })
+                .catch(error => {
+                    console.error("Error verifying driver ID:", error);
+                    feedbackElement.textContent = "Error verifying driver ID. Please try again.";
+                });
+            };
+
+            // Event listener for when the driver ID is entered
+            driverIdInput.addEventListener("input", function() {
+                const driverId = driverIdInput.value.trim();
+                if (driverId) {
+                    // Verify the driver ID before enabling the Finish Trip button
+                    verifyDriverId(driverId);
+                } else {
+                    finishTripBtn.disabled = true;  // Disable "Finish Trip" button if no ID is entered
+                    feedbackElement.textContent = "Please enter a driver ID.";
+                }
+            });
+            document.getElementById("driverIdInput").addEventListener("input", function () {
+                const driverId = this.value.trim();
+                if (!driverId) {
+                    feedbackElement.textContent = "Please enter a driver ID.";
+                    finishTripBtn.disabled = true;
+                    return;
+                }
+            
+                fetch("/verify-driver-code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ driverId }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            feedbackElement.textContent = "Driver ID verified. Proceed.";
+                            finishTripBtn.disabled = false;
+                        } else {
+                            feedbackElement.textContent = data.message;
+                            finishTripBtn.disabled = true;
+                        }
+                    })
+                    .catch(() => {
+                        feedbackElement.textContent = "Error verifying driver ID. Try again.";
+                    });
+            });
+            
+            document.getElementById("finishTripBtn").addEventListener("click", function () {
+                const driverId = document.getElementById("driverIdInput").value.trim();
+            
+                fetch("/finish-trip", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ driverId }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert(data.message);
+                            feedbackElement.textContent = "Trip completed successfully.";
+                            driverIdInput.value = "";
+                            finishTripBtn.disabled = true;
+                        } else {
+                            feedbackElement.textContent = data.error || "Error completing trip.";
+                        }
+                    })
+                    .catch(() => {
+                        feedbackElement.textContent = "Network error. Please try again.";
+                    });
+            });
+        });
+            
+    </script>
+</body>
+</html>

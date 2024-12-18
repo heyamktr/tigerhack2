@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Bicycle Rental - DePauw University</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('c.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+    /*hello*/
+    /* Header Styles */
+    .header {
+      background-color: #333; /* Dark background */
+      color: white;          /* White text */
+      padding: 10px 0;       /* Vertical padding */
+      position: fixed;       /* Fixed position */
+      top: 0;                /* Stick to the top */
+      width: 100%;           /* Full width */
+      z-index: 1000;         /* Above other elements */
+      text-align: center;    /* Center the content */
+    }
+
+    .header nav {
+      display: flex;
+      justify-content: center; /* Center navigation items */
+      gap: 30px;               /* Space between links */
+    }
+
+    .header nav a {
+      color: white;
+      text-decoration: none;  /* Remove underline */
+      font-weight: bold;
+      text-transform: uppercase; /* Uppercase text */
+      font-size: 0.9rem;      /* Font size */
+    }
+
+    .header nav a:hover {
+      color: #FFD700; /* Gold color on hover */
+    }
+
+    /* Push content below the fixed header */
+    .container {
+      margin-top: 100px; /* Prevent overlap with header */
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #4CAF50;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap; /* Ensures responsiveness */
+    }
+
+    .form-group label {
+      flex: 1;
+      min-width: 150px;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      flex: 2;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+      align-self: flex-start; /* Aligns with the first input */
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .bicycle-list {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <nav>
+        <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
+        <a href="passenger.html">PASSENGER</a>
+        <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+        <a href="bicycle_rental.html">BIKE RENTAL</a>
+        <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+        <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+        <a href="ruraltransit.html">RURAL TRANSIT</a>
+        <a href="otherinformation.html">OTHER INFORMATION</a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Free Bicycle Rental</h1>
+    <!-- Bicycle Rental Form -->
+    <form id="rentalForm">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+
+      <label for="studentid">Student ID:</label>
+      <input type="number" id="studentid" placeholder="Enter your student ID" required>
+
+      <label for="studentemail">Email Address:</label>
+      <input type="text" id="studentemail" placeholder="Enter your email" required>
+
+      <label for="rentTime">Rent Time (in hours):</label>
+      <input type="number" id="rentTime" placeholder="Enter rent time (hours)" required min="1" required max = "10">
+
+      <button type="button" onclick="printList()">Check Availability</button>
+    </form>
+
+    <!-- Available Bikes Section -->
+    <div id="availableBikes" class="bicycle-list"></div>
+  </div>
+
+  <script src="bicycle_rental.js"></script>
+</body>
+</html>

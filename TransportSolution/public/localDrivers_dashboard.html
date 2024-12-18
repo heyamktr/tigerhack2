@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('q.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            color: #000000;
+        }
+
+        h1, h3 {
+            color: #333;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* Content Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fefefe;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        /* List Styling */
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        /* Confirmation Box Styles */
+        #confirmationBox {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #confirmationBox p {
+            font-weight: bold;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Error Message Styles */
+        .error {
+            color: red;
+        }
+
+        #errorMessage {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Success Page Styles */
+        #successPage {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #dff0d8;
+            border-radius: 5px;
+            border: 1px solid #d6e9c6;
+        }
+
+        #successPage h3 {
+            color: #3c763d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
+        <a href="passenger.html">PASSENGER</a>
+        <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+        <a href="bicycle_rental.html">BIKE RENTAL</a>
+        <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+        <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+        <a href="ruraltransit.html">RURAL TRANSIT</a>
+        <a href="otherinformation.html">OTHER INFORMATION</a>
+    </div>
+
+    <div class="container">
+        <h1>Driver Dashboard</h1>
+    
+        <!-- Driver Info Section -->
+        <div class="section">
+            <h3>Driver Information:</h3>
+            <div id="driverInfo"></div>
+        </div>
+    
+        <!-- Feedback Section -->
+        <div class="section">
+            <h3>Feedback:</h3>
+            <ul id="feedbackList"></ul>
+        </div>
+    
+        <!-- Trips Driven Section -->
+        <div class="section">
+            <h3>Trips Driven:</h3>
+            <p id="tripsDriven"></p>
+        </div>
+    
+        <!-- Availability Status Section -->
+        <div class="section">
+            <h3>Availability Status:</h3>
+            <label>
+                <input type="radio" id="availabilityCheckbox" name="availability" value="available"> Available
+            </label><br>
+            
+            <label>
+                <input type="radio" id="unavailabilityCheckbox" name="availability" value="unavailable"> Unavailable
+            </label>
+            <br>
+            <button id="submitAvailabilityButton">Submit</button>
+    
+            <!-- Confirmation Box -->
+            <div id="confirmationBox" style="display: none;">
+                <p>Are you sure you want to update your availability status?</p>
+                <button id="confirmButton">Yes</button>
+                <button id="cancelButton">No</button>
+            </div>
+    
+            <!-- Error Message -->
+            <div id="errorMessage" style="display: none;">
+                <p>You have already updated your availability status. You are only allowed to choose one option.</p>
+            </div>
+        </div>
+    
+        <!-- Success Page -->
+        <div id="successPage" style="display: none;">
+            <h3>Your availability has been successfully updated!</h3>
+            <button id="cancelAvailabilityButton">Cancel Availability</button>
+            <button id="viewPassengersButton">View Available Passengers</button>
+        </div>
+    </div>
+    
+    <script>
+        let isAvailabilityUpdated = false; // Flag to check if availability has been updated
+    
+        // Function to fetch driver data
+        async function fetchDriverData() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const uniqueCode = params.get("uniqueCode");
+    
+                const response = await fetch(`/driver-data?uniqueCode=${uniqueCode}`);
+                const data = await response.json();
+    
+                if (response.ok) {
+                    displayDriverData(data);
+                    setupAvailabilityListeners(uniqueCode, data.driver.Available);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error fetching driver data:", error);
+                alert("Failed to load driver data. Please try again.");
+            }
+        }
+    
+        // Function to display driver information
+        function displayDriverData(data) {
+            // Display driver's personal information
+            document.getElementById("driverInfo").innerHTML = ` 
+                <p><strong>Name:</strong> ${data.driver.Name}</p>
+                <p><strong>Email:</strong> ${data.driver.Email}</p>
+                <p><strong>Phone:</strong> ${data.driver.Phone}</p>
+            `;
+    
+            // Display feedback from passengers
+            const feedbackList = document.getElementById("feedbackList");
+            feedbackList.innerHTML = ""; // Clear previous feedback
+            data.feedback.forEach(feedback => {
+                const li = document.createElement("li");
+                li.innerText = feedback;
+                feedbackList.appendChild(li);
+            });
+    
+            // Display the number of trips driven
+            document.getElementById("tripsDriven").innerText = data.driver.Trips || 0;
+        }
+    
+        // Function to handle availability listeners
+        function setupAvailabilityListeners(uniqueCode, initialAvailability) {
+            const availabilityCheckbox = document.getElementById("availabilityCheckbox");
+            const unavailabilityCheckbox = document.getElementById("unavailabilityCheckbox");
+    
+            // Set initial radio button state
+            availabilityCheckbox.checked = initialAvailability || false;
+            unavailabilityCheckbox.checked = !(initialAvailability || false);
+    
+            const submitButton = document.getElementById("submitAvailabilityButton");
+            submitButton.addEventListener("click", () => {
+                if (isAvailabilityUpdated) {
+                    document.getElementById("errorMessage").style.display = "block";
+                    return;
+                }
+    
+                if (!availabilityCheckbox.checked && !unavailabilityCheckbox.checked) {
+                    alert("Please select either 'Available' or 'Unavailable'.");
+                    return;
+                }
+    
+                document.getElementById("confirmationBox").style.display = "block";
+            });
+    
+            document.getElementById("confirmButton").addEventListener("click", () => updateAvailability(uniqueCode));
+            document.getElementById("cancelButton").addEventListener("click", () => {
+                document.getElementById("confirmationBox").style.display = "none";
+            });
+    
+            document.getElementById("cancelAvailabilityButton").addEventListener("click", () => cancelAvailability(uniqueCode));
+            document.getElementById("viewPassengersButton").addEventListener("click", () => {
+                window.location.href = "/localDrivers_available_passengers.html";
+            });
+        }
+    
+        // Function to update availability
+        async function updateAvailability(uniqueCode) {
+            try {
+                const available = document.getElementById("availabilityCheckbox").checked;
+    
+                const response = await fetch(`/update-availability`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ uniqueCode, available }),
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    isAvailabilityUpdated = true;
+                    document.getElementById("confirmationBox").style.display = "none";
+                    document.getElementById("successPage").style.display = "block";
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error updating availability:", error);
+                alert("Failed to update availability. Please try again.");
+            }
+        }
+    
+        // Function to cancel availability
+        async function cancelAvailability(uniqueCode) {
+            try {
+                const response = await fetch(`/cancel-availability`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ uniqueCode }),
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById("successPage").style.display = "none";
+                    isAvailabilityUpdated = false;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error("Error canceling availability:", error);
+                alert("Failed to cancel availability. Please try again.");
+            }
+        }
+    
+        // Fetch the driver data on page load
+        fetchDriverData();
+    </script>
+</body>
+</html>    

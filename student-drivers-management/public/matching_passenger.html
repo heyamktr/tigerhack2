@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Passenger Matching</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .match-list {
+            margin-top: 20px;
+        }
+        .match-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .match-item button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+        .match-item button:hover {
+            background-color: #218838;
+        }
+        .success-message {
+            color: green;
+            font-weight: bold;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Driver Passenger Matching</h1>
+
+        <div id="verify-section">
+            <h2>Verify Driver</h2>
+            <label for="studentId">Enter Student ID:</label>
+            <input type="text" id="studentId" placeholder="Enter your Student ID">
+            <button id="verifyDriverBtn">Verify</button>
+            <p id="verifyMessage"></p>
+        </div>
+
+        <div id="match-section" class="hidden">
+            <h2>Matching Passengers</h2>
+            <button id="getMatchesBtn">Get Matching Passengers</button>
+            <div id="matchesContainer" class="match-list"></div>
+            <button id="submitSelectionBtn" disabled>Submit Selection</button>
+            <p id="selectionMessage" class="success-message hidden"></p>
+            <p id="errorMessage" class="error-message hidden"></p>
+        </div>
+        
+        <!-- Trip Finish Button -->
+        <div class="trip-finish" style="text-align: center;">
+            <button id="tripFinishButton">Finish Trip</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const studentIdInput = document.getElementById('studentId');
+            const verifyDriverBtn = document.getElementById('verifyDriverBtn');
+            const verifyMessage = document.getElementById('verifyMessage');
+            const matchSection = document.getElementById('match-section');
+            const getMatchesBtn = document.getElementById('getMatchesBtn');
+            const matchesContainer = document.getElementById('matchesContainer');
+            const submitSelectionBtn = document.getElementById('submitSelectionBtn');
+            const selectionMessage = document.getElementById('selectionMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            let verifiedStudentId = null;
+            let selectedPassengerId = null; // Store the selected passenger's ID
+            let hasSelectedPassenger = false; // Track if driver has already selected a passenger
+
+            // Verify Driver
+            verifyDriverBtn.addEventListener('click', async () => {
+                const studentId = studentIdInput.value;
+                if (!studentId) {
+                    verifyMessage.textContent = 'Please enter a Student ID.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/verifyDriver?studentId=${studentId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        verifiedStudentId = studentId;
+                        verifyMessage.textContent = 'Driver verified successfully!';
+                        matchSection.classList.remove('hidden');
+                    } else {
+                        verifyMessage.textContent = data.error || 'Verification failed.';
+                    }
+                } catch (error) {
+                    console.error('Error verifying driver:', error);
+                    verifyMessage.textContent = 'An error occurred during verification.';
+                }
+            });
+
+            // Fetch Matching Passengers
+            getMatchesBtn.addEventListener('click', async () => {
+                if (!verifiedStudentId) {
+                    alert('Please verify your Student ID first.');
+                    return;
+                }
+
+                matchesContainer.innerHTML = '<p>Loading matches...</p>';
+
+                try {
+                    const response = await fetch(`/getMatchingPassengers?studentId=${verifiedStudentId}`);
+                    const data = await response.json();
+
+                    if (response.status === 404) {
+                        matchesContainer.innerHTML = '<p>No matching passengers found.</p>';
+                        return;
+                    }
+
+                    matchesContainer.innerHTML = '';
+                    data.forEach(passenger => {
+                        const matchItem = document.createElement('div');
+                        matchItem.classList.add('match-item');
+
+                        matchItem.innerHTML = `
+                            <input type="radio" name="passenger" value="${passenger.ID}" id="passenger_${passenger.ID}">
+                            <label for="passenger_${passenger.ID}">
+                                <p><strong>Passenger ID:</strong> ${passenger.ID}</p>
+                                <p><strong>Name:</strong> ${passenger.passengerName}</p>
+                                <p><strong>Pickup Location:</strong> ${passenger.pickupLocation}</p>
+                                <p><strong>Destination:</strong> ${passenger.destination}</p>
+                                <p><strong>Scheduled Time:</strong> ${passenger.scheduledTime}</p>
+                                <p><strong>Return Time:</strong> ${passenger.returnTime}</p>
+                                <p><strong>Trip Type:</strong> ${passenger.tripType}</p>
+                            </label>
+                        `;
+
+                        // Add event listener for selection
+                        matchItem.querySelector('input').addEventListener('change', (event) => {
+                            selectedPassengerId = event.target.value; // Set selected passenger ID
+                            console.log(`Selected Passenger ID: ${selectedPassengerId}`);
+                            submitSelectionBtn.disabled = false; // Enable the submit button when a passenger is selected
+                        });
+
+                        matchesContainer.appendChild(matchItem);
+                    });
+                } catch (error) {
+                    console.error('Error fetching matches:', error);
+                    matchesContainer.innerHTML = '<p>An error occurred while fetching matches.</p>';
+                }
+            });
+
+            // Handle submit button click for passenger selection
+            submitSelectionBtn.addEventListener('click', async () => {
+                if (!selectedPassengerId) {
+                    alert('Please select a passenger.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/submitSelection', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            studentId: verifiedStudentId,
+                            passengers: [selectedPassengerId], // Send the selected passenger's ID
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.status === 200) {
+                        selectionMessage.textContent = result.message;
+                        selectionMessage.classList.remove('hidden');
+                        submitSelectionBtn.disabled = true; // Disable the button after a selection
+                        hasSelectedPassenger = true; // Prevent further selection
+                        errorMessage.classList.add('hidden');
+                    } else {
+                        errorMessage.textContent = result.error;
+                        errorMessage.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error submitting selection:', error);
+                    alert('An error occurred while submitting the selection.');
+                }
+            });
+
+            // Disable selection functionality if driver has already chosen
+            if (hasSelectedPassenger) {
+                submitSelectionBtn.disabled = true; // Disable the button if driver already selected
+                getMatchesBtn.disabled = true; // Disable the "Get Matching Passengers" button to prevent further action
+            }
+
+            // Redirect to trip_finish.html when the "Finish Trip" button is clicked
+            document.getElementById("tripFinishButton").addEventListener("click", () => {
+                if (!document.getElementById("tripFinishButton").disabled) {
+                    window.location.href = "/trip_finish.html";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

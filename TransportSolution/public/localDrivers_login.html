@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('q.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the content horizontally */
+            justify-content: center; /* Center the content vertically */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .header .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px; /* Add some spacing below the logo */
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 20px; /* Space between navigation items */
+        }
+
+        .nav-buttons a {
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-buttons a:hover {
+            background-color: #555; /* Highlight on hover */
+            border-radius: 5px;
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-top: 150px; /* Adjust for header */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input, button {
+            width: 100%; /* Ensure both input and button align */
+            box-sizing: border-box; /* Include padding in the width */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <div class="nav-buttons">
+            <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
+            <a href="passenger.html">PASSENGER</a>
+            <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+            <a href="bicycle_rental.html">BIKE RENTAL</a>
+            <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+            <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+            <a href="ruraltransit.html">RURAL TRANSIT</a>
+            <a href="otherinformation.html">OTHER INFORMATION</a>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-container">
+        <h1>Driver Login</h1>
+        <form id="loginForm">
+            <label for="uniqueCode">Enter Unique Code:</label>
+            <input type="text" id="uniqueCode" name="uniqueCode" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Handling form submission
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const uniqueCode = document.getElementById("uniqueCode").value;
+
+            const response = await fetch("/driver-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ uniqueCode }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = `/localDrivers_dashboard.html?uniqueCode=${uniqueCode}`;
+            } else {
+                document.getElementById("message").innerText = data.message;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Driver Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('a.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+
+        .header {
+            background-color: #333;
+            color: white;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .header nav a:hover {
+            color: #4CAF50;
+        }
+
+        .container {
+            margin-top: 120px; /* To prevent overlap with the header */
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #4CAF50;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap; /* Ensures responsiveness */
+        }
+
+        .form-group label {
+            flex: 1;
+            min-width: 150px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            flex: 2;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            align-self: flex-start; /* Aligns with the first input */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #viewAvailableListButton,
+        #matchingPassengerButton {
+            display: none; /* Hide the buttons initially */
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <nav>
+            <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
+            <a href="passenger.html">PASSENGER</a>
+            <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+            <a href="bicycle_rental.html">BIKE RENTAL</a>
+            <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+            <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+            <a href="ruraltransit.html">RURAL TRANSIT</a>
+            <a href="otherinformation.html">OTHER INFORMATION</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Student Driver Information</h1>
+        <!-- Form to input driver data -->
+        <form id="driver-form">
+            <div class="form-group">
+                <label for="studentId">Student ID:</label>
+                <input type="text" id="studentId" name="studentId" required>
+            </div>
+            <div class="form-group">
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" name="studentName" required>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="car">Car (Make/Model):</label>
+                <input type="text" id="car" name="car" required>
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacity (No. of Passengers):</label>
+                <input type="number" id="capacity" name="capacity" required>
+            </div>
+            <h3>Trip Information</h3>
+            <div class="form-group">
+                <label for="location">Desired Pickup Location:</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="scheduledTime">Depart Time:</label>
+                <input type="datetime-local" id="scheduledTime" name="scheduledTime" required>
+            </div>
+            <div class="form-group">
+                <label for="returnTime">Return Time:</label>
+                <input type="datetime-local" id="returnTime" name="returnTime" required>
+            </div>
+            <div class="form-group">
+                <label for="tripType">Trip Type:</label>
+                <select id="tripType" name="tripType" required>
+                    <option value="oneway">One Way</option>
+                    <option value="roundtrip">Round Trip</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="freeTrip">Offer a free trip?</label>
+                <input type="checkbox" id="freeTrip" name="freeTrip">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <br>
+
+        <!-- Button container for available passengers and matching passenger -->
+        <div class="button-container">
+            <button id="viewAvailableListButton">View Available Passenger List</button>
+            <button id="matchingPassengerButton">Match with Passenger</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("driver-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const driverData = {
+                studentId: document.getElementById("studentId").value,
+                studentName: document.getElementById("studentName").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                email: document.getElementById("email").value,
+                car: document.getElementById("car").value,
+                capacity: document.getElementById("capacity").value,
+                location: document.getElementById("location").value,
+                scheduledTime: document.getElementById("scheduledTime").value,
+                returnTime: document.getElementById("returnTime").value,
+                tripType: document.getElementById("tripType").value,
+                freeTrip: document.getElementById("freeTrip").checked,
+            };
+
+            fetch("/save-driver", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(driverData),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    alert("Driver information saved successfully!");
+                    document.getElementById("viewAvailableListButton").style.display = "block";
+                    document.getElementById("matchingPassengerButton").style.display = "block";
+                })
+                .catch((error) => {
+                    console.error("Error saving driver data:", error);
+                    alert("Failed to save driver data.");
+                });
+        });
+
+        document.getElementById("viewAvailableListButton").addEventListener("click", function () {
+            window.location.href = "/studentDrivers_available_lists.html";
+        });
+
+        document.getElementById("matchingPassengerButton").addEventListener("click", function () {
+            
+            window.location.href = "/studentDrivers_matching_passenger.html";
+        });
+    </script>
+</body>
+</html>
