@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax and Tiger Eyes</title>
+    <style>
+        /* General body styles: Remove margins, set font, and prevent horizontal scrolling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Footer styles: Fixed at the bottom with navigation links */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 0;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        footer nav {
+            display: inline-block; /* Center navigation links horizontally */
+        }
+
+        /* Footer navigation link styles */
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #00bcd4; /* Change color on hover */
+        }
+
+        /* Section styles for the parallax effect */
+        section {
+            height: 100vh; /* Full-screen height for each section */
+            display: flex; /* Center content vertically and horizontally */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative; /* To position the pseudo-element background */
+            overflow: hidden;
+        }
+
+        /* Pseudo-element for parallax background effect */
+        section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-attachment: fixed; /* Parallax effect */
+            background-position: center;
+            z-index: -1; /* Place behind section content */
+        }
+
+        /* Background images for each section */
+        #home::before { background-image: url('test1.png.jpg'); }
+        #passenger::before { background-image: url('test2.png.jpeg'); }
+        #studentDrivers::before { background-image: url('test3.png.jpeg'); }
+        #bikeRental::before { background-image: url('test4.png.jpeg'); }
+        #localDriverAccount::before { background-image: url('test5.png.jpeg'); }
+        #localDriverLogin::before { background-image: url('test1.png.jpg'); }
+        #ruralTransit::before { background-image: url('test2.png.jpeg'); }
+        #otherInfo::before { background-image: url('test3.png.jpeg'); }
+
+        /* Tiger Eyes container styles */
+        .container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            height: 300px;
+            width: 250px;
+            z-index: 1000; /* Ensure it appears on top of other content */
+        }
+
+        /* Tiger character styles */
+        .character {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 1; /* Behind the eyes */
+        }
+
+        /* Eye styles */
+        .eye {
+            position: absolute;
+            width: 15px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%; /* Circular shape */
+            overflow: hidden; /* Hide pupil overflow */
+            border: 2px solid black;
+            z-index: 2;
+        }
+
+        /* Pupil styles */
+        .pupil {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background-color: black;
+            border-radius: 50%;
+            top: 7.5px;
+            left: 5px;
+            transition: all 0.05s linear; /* Smooth movement */
+        }
+
+        /* Eye positions */
+        .eye1 { top: 90px; left: 100px; }
+        .eye2 { top: 90px; left: 135px; }
+
+        /* Side buttons for navigation */
+        .side-buttons {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+
+        .side-buttons a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .side-buttons a:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        /* Bottom buttons for additional navigation */
+        .top-buttons {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-buttons a {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .top-buttons a:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+
+        /* Popup overlay and box styles */
+        .popup-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+            z-index: 2000;
+        }
+
+        .popup-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- Parallax Sections -->
+    <section id="home">Welcome to the HOME section</section>
+    <section id="passenger">Welcome to the PASSENGER section</section>
+    <section id="studentDrivers">Welcome to the STUDENT DRIVERS section</section>
+    <section id="bikeRental">Welcome to the BIKE RENTAL section</section>
+    <section id="localDriverAccount">Welcome to the LOCAL DRIVER CREATE ACCOUNT section</section>
+    <section id="localDriverLogin">Welcome to the LOCAL DRIVER LOG IN section</section>
+    <section id="ruralTransit">Welcome to the RURAL TRANSIT section</section>
+    <section id="otherInfo">Welcome to the OTHER INFORMATION section</section>
+
+    <!-- Tiger Eyes Character -->
+    <div class="container">
+        <img src="character.png" alt="Tiger Character" class="character">
+        <div class="eye eye1"><div class="pupil" id="pupil1"></div></div>
+        <div class="eye eye2"><div class="pupil" id="pupil2"></div></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>DEPAUW TRANSPORTATION SUPPORT</h1>
+        <button onclick="showPopup()">GO</button>
+    </div>
+
+    <!-- Side Buttons -->
+    <div class="side-buttons">
+        <a href="https://www.depauw.edu/admission-aid/visit-events">VISIT</a>
+        <a href="https://www.depauw.edu/files/resources/dpu_campus-map_with-nature-park_1-22.pdf">CAMPUS MAP</a>
+        <a href="https://www.google.com/maps/dir/@39.6408054,-86.8722136,3572m/data=!3m1!1e3?entry=ttu">LOCATION</a>
+        <a href="ruraltransit.html">RURAL TRANSIT</a>
+    </div>
+
+    <!-- Bottom Buttons -->
+    <div class="top-buttons">
+        <a href="https://www.depauw.edu/admission-aid/visit-events">VISIT CAMPUS</a>
+        <a href="https://www.depauw.edu/admission-aid/apply">APPLY</a>
+        <a href="https://angelchube306.wixsite.com/depauw-transportat-1">AUTHOR</a>
+    </div>
+
+    <!-- Popup -->
+    <div id="popup" class="popup-overlay">
+        <div class="popup-box">
+            <h2>Welcome to DePauw Transportation Support</h2>
+            <p>This website provides transportation solutions.</p>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <nav>
+        <a href="index.html">HOME</a> <!-- Link to the home page -->
+        <a href="passenger.html">PASSENGER</a> <!-- Link to passenger section -->
+        <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a> <!-- Link to student drivers section -->
+        <a href="bicycle_rental.html">BIKE RENTAL</a> <!-- Link to bike rental section -->
+        <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a> <!-- Link to local driver account creation -->
+        <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a> <!-- Link to local driver login -->
+        <a href="ruraltransit.html">RURAL TRANSIT</a> <!-- Link to rural transit section -->
+        <a href="otherinformation.html">OTHER INFORMATION</a> <!-- Link to other information -->
+        </nav>
+    </footer>
+
+    <!-- Tiger Eyes Script -->
+    <script>
+        // Makes the tiger's pupils follow the mouse movement
+        const pupils = [document.getElementById('pupil1'), document.getElementById('pupil2')];
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            pupils.forEach(pupil => {
+                const rect = pupil.parentElement.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const angle = Math.atan2(clientY - centerY, clientX - centerX);
+                pupil.style.transform = `translate(${Math.cos(angle) * 4}px, ${Math.sin(angle) * 6}px)`;
+            });
+        });
+
+        // Displays the popup
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        // Hides the popup
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
