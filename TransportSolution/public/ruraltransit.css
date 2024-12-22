@@ -9,32 +9,31 @@ body {
 
 /* Header Section */
 /* Header Section */
+/* Header Section */
 header {
-  background: rgba(0, 0, 51, 0.9);
-  padding: 20px;
-  text-align: center;
+  background: linear-gradient(135deg, #0056b3, #003d80);
+  padding: 20px 0;
   color: #fff;
-  position: relative;
-}
-
-/* Background for the heading */
-header h1 {
-  font-size: 2.8em;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(to right, #003d80, #0056b3);
-  border-radius: 10px;
-  display: inline-block;
+  text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  color: #ffea2d;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-/* Optional: Styling for nav links to match */
+/* Heading Style */
+header h1 a {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ffea2d;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Navigation */
 nav ul {
-  list-style: none;
   display: flex;
   justify-content: center;
+  list-style: none;
   padding: 0;
   margin: 10px 0 0 0;
 }
@@ -47,22 +46,24 @@ nav ul li a {
   color: #ffea2d;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
-  text-decoration: underline;
-}
-nav ul li:first-child a {
-  color: #ffea2d; /* Orange color for Home */
-  font-weight: bold;
+  color: #ffd700;
 }
 
-nav ul li:first-child a:hover {
-  text-decoration: underline;
+/* Responsive Design */
+@media (max-width: 768px) {
+  nav ul {
+      flex-direction: column;
+  }
+
+  nav ul li {
+      margin: 10px 0;
+  }
 }
-
-
 
 /* Shared Background */
 .shared-background {
@@ -103,7 +104,7 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(to bottom, rgba(179, 217, 255, 0.7), rgba(255, 255, 255, 0.7)),
-              url('backgroun.png') fixed;
+              url('images/backgroun.png') fixed;
   background-size: cover; /* Ensures the image covers the entire screen */
   background-position: center; /* Centers the image */
   color: #333;
