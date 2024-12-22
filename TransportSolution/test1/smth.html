@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .chat-box {
+            width: 350px;
+            height: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: #e9e9e9;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+        }
+
+        .bot-message {
+            background: #d1f0d1;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: #d9d9f3;
+            align-self: flex-end;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-box">
+        <div class="chat-header">Chatbot</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const userMessage = userInput.value.trim();
+
+            if (userMessage) {
+                // Add user's message
+                const userMessageElement = document.createElement('div');
+                userMessageElement.className = 'message user-message';
+                userMessageElement.textContent = userMessage;
+                chatMessages.appendChild(userMessageElement);
+
+                // Simulate bot's response
+                setTimeout(() => {
+                    const botMessageElement = document.createElement('div');
+                    botMessageElement.className = 'message bot-message';
+                    botMessageElement.textContent = generateBotResponse(userMessage);
+                    chatMessages.appendChild(botMessageElement);
+
+                    // Scroll to the bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 500);
+
+                userInput.value = '';
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function generateBotResponse(userMessage) {
+            const responses = {
+                hello: "Hi there! How can I assist you today?",
+                help: "Sure, I'm here to help! What do you need assistance with?",
+                bye: "Goodbye! Have a great day!"
+            };
+
+            const defaultResponse = "I'm not sure how to respond to that.";
+            const lowerCaseMessage = userMessage.toLowerCase();
+
+            return responses[lowerCaseMessage] || defaultResponse;
+        }
+    </script>
+</body>
+</html>
