@@ -14,37 +14,39 @@
 
         /* Background Image */
         body {
-            background: url('a.png') no-repeat center center fixed;
+            background: url('images/a.png') no-repeat center center fixed;
             background-size: cover;
             color: #333;
         }
 
-        /* Header */
-        header {
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 15px 0;
-        }
-
-        header nav ul {
+        .header {
+            background-color: #333; /* Dark background */
+            color: white;          /* White text */
+            padding: 10px 0;       /* Vertical padding */
+            position: fixed;       /* Fixed position */
+            top: 0;                /* Stick to the top */
+            width: 100%;           /* Full width */
+            z-index: 1000;         /* Above other elements */
+            text-align: center;    /* Center the content */
+          }
+      
+          .header nav {
             display: flex;
-            justify-content: center;
-            list-style: none;
-        }
-
-        header nav ul li {
-            margin: 0 20px;
-        }
-
-        header nav ul li a {
-            color: #fff;
-            text-decoration: none;
+            justify-content: center; /* Center navigation items */
+            gap: 30px;               /* Space between links */
+          }
+      
+          .header nav a {
+            color: white;
+            text-decoration: none;  /* Remove underline */
             font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        header nav ul li a:hover {
-            color: #FFD700;
-        }
+            text-transform: uppercase; /* Uppercase text */
+            font-size: 0.9rem;      /* Font size */
+          }
+      
+          .header nav a:hover {
+            color: #FFD700; /* Gold color on hover */
+          }
 
         /* Main Content */
         main {
@@ -106,18 +108,18 @@
 <body>
     <!-- Header Section -->
     <header>
-        <nav>
-            <ul>
-                <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
-            <a href="passenger.html">PASSENGER</a>
-            <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
-            <a href="bicycle_rental.html">BIKE RENTAL</a>
-            <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
-            <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
-            <a href="ruraltransit.html">RURAL TRANSIT</a>
-            <a href="otherinformation.html">OTHER INFORMATION</a>
-            </ul>
-        </nav>
+        <div class="header">
+            <nav>
+              <a href="index.html">HOME</a>
+              <a href="passenger.html">PASSENGER</a>
+              <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
+              <a href="bicycle_rental.html">BIKE RENTAL</a>
+              <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
+              <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
+              <a href="ruraltransit.html">RURAL TRANSIT</a>
+              <a href="otherinformation.html">OTHER INFORMATION</a>
+            </nav>
+          </div>
     </header>
 
     <!-- Main Content -->
