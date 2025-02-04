@@ -232,6 +232,21 @@ section button:hover {
         z-index: 999; /* Ensure it appears above other content but below the popup */
         pointer-events: none; /* Allows interactions with underlying content */
     }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animated-text {
+        opacity: 0;
+        animation: fadeInUp 1s ease-out forwards;
+    }
     
     </style>
 </head>
@@ -244,7 +259,17 @@ section button:hover {
             <h1>DEPAUW TRANSPORTATION SUPPORT</h1>
             <button onclick="showPopup()">GO</button>
         </div>s</section>
-    <section id="passenger">Welcome to the PASSENGER section</section>
+    <section id="passenger">
+    <h2>Passenger Services</h2>
+    <p>Find out how to request a ride, join a carpool, or access shuttle services on campus.</p>
+    <ul>
+        <li>Campus Shuttle Schedule</li>
+        <li>Ride-Sharing Options</li>
+        <li>Public Transportation Access</li>
+    </ul>
+    <button onclick="window.location.href='passenger.html'">Learn More</button>
+</section>
+
     <section id="studentDrivers">Welcome to the STUDENT DRIVERS section</section>
     <section id="bikeRental">Welcome to the BIKE RENTAL section</section>
     <section id="localDriverAccount">Welcome to the LOCAL DRIVER CREATE ACCOUNT section</section>
@@ -301,6 +326,12 @@ section button:hover {
         </nav>
     </footer>
 
+
+
+
+
+
+
     <!-- Tiger Eyes Script -->
     <script>
         // Makes the tiger's pupils follow the mouse movement
@@ -325,6 +356,20 @@ section button:hover {
         function closePopup() {
             document.getElementById('popup').style.display = 'none';
         }
+        //trigger animation
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelector('.animated-text').style.opacity = 1;
+                    entry.target.querySelector('.animated-text').style.animation = 'fadeInUp 1s ease-out forwards';
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
     </script>
 </body>
 </html>
