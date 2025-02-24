@@ -3,134 +3,632 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEPAUW TRANSPORTATION SUPPORT</title>
-    <link rel="stylesheet" href="mainPage.css"> <!-- Link to the external CSS file -->
+    <title>Parallax and Tiger Eyes</title>
     <style>
-        /* Popup background overlay */
+        /* General body styles: Remove margins, set font, and prevent horizontal scrolling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Footer styles: Fixed at the bottom with navigation links */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px 0;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        footer nav {
+            display: inline-block; /* Center navigation links horizontally */
+        }
+
+        /* Footer navigation link styles */
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #FFD700; /* Change color on hover */
+        }
+
+        /* Section styles for the parallax effect */
+        section {
+            height: 100vh; /* Full-screen height for each section */
+            display: flex; /* Center content vertically and horizontally */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative; /* To position the pseudo-element background */
+            overflow: hidden;
+        }
+        .hidden {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        /* Visible animated state */
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+/* General styles for sections */
+section {
+    height: 100vh; /* Full-screen height */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    text-align: center;
+}
+
+/* Button styles */
+section button {
+    padding: 15px 30px;
+    font-size: 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+section button:hover {
+    background-color: #218838;
+}
+
+        /* Pseudo-element for parallax background effect */
+        section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-attachment: fixed; /* Parallax effect */
+            background-position: center;
+            z-index: -1; /* Place behind section content */
+        }
+        
+        /* Background images for each section */
+        #home::before { background-image: url('images/tripconfirmation.png'); }
+        #passenger::before { background-image: url('images/a.png'); }
+        #studentDrivers::before { background-image: url('images/ub-pool.jpg'); }
+        #bikeRental::before { background-image: url('images/l.jpg'); }
+        #localDriverAccount::before { background-image: url('images/resize.webp'); }
+        #localDriverLogin::before { background-image: url('images/Prindle_001-e1654870938797.jpg'); }
+        #ruralTransit::before { background-image: url('images/nature-park-5.jpg'); }
+        #otherInfo::before { background-image: url('images/convert.webp'); }
+
+        /* Tiger Eyes container styles */
+        .container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            height: 300px;
+            width: 250px;
+            z-index: 1000; /* Ensure it appears on top of other content */
+        }
+
+        /* Tiger character styles */
+        .character {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 1; /* Behind the eyes */
+        }
+
+        /* Eye styles */
+        .eye {
+            position: absolute;
+            width: 15px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%; /* Circular shape */
+            overflow: hidden; /* Hide pupil overflow */
+            border: 2px solid black;
+            z-index: 2;
+            font-weight: bold;
+        }
+
+        /* Pupil styles */
+        .pupil {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background-color: black;
+            border-radius: 50%;
+            top: 7.5px;
+            left: 5px;
+            transition: all 0.05s linear; /* Smooth movement */
+        }
+
+        /* Eye positions */
+        .eye1 { top: 90px; left: 100px; }
+        .eye2 { top: 90px; left: 135px; }
+
+        /* Side buttons for navigation */
+        .side-buttons {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+
+        .side-buttons a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #FFD700;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .side-buttons a:hover {
+            background-color: #FFC107; /* Darker blue on hover */
+        }
+
+        /* Bottom buttons for additional navigation */
+        .top-buttons {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-buttons a {
+            padding: 10px 20px;
+            background-color: #FFD700;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .top-buttons a:hover {
+            background-color: #FFC107; /* Darker green on hover */
+        }
+
+        /* Popup overlay and box styles */
         .popup-overlay {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 10;
+            background: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+            z-index: 2000;
         }
-        /* Popup content styling */
+
         .popup-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #007BFF; /* Calming blue color */
+            background: white;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            border-radius: 8px;
-            color: white;
-        }
-        .popup-box h2 {
-            margin: 0 0 10px;
-        }
-        .popup-box p, .popup-box ul {
-            margin: 10px 0;
+            border-radius: 10px;
             text-align: left;
+            color: black;
         }
-        .popup-box ul {
-            padding-left: 20px;
-        }
-        .close-btn {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: #f44336;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .close-btn:hover {
-            background: #d32f2f;
-        }
+        /* Black overlay with 30% opacity */
+    .black-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3); /* 30% opacity */
+        z-index: 999; /* Ensure it appears above other content but below the popup */
+        pointer-events: none; /* Allows interactions with underlying content */
+    }
+    /* Add the chatbot styles below */
+    .chatbot {
+        position: fixed;
+        bottom: 50px;
+        left: 250px;
+        width: 300px;
+        height: 400px;
+        background-color: #fff;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    #chatbot-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    #chatbot-header h3 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    #chatbot-close {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #chatbot-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    #chatbot-messages {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #chatbot-input {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    #send-btn {
+        padding: 8px 15px;
+        margin-left: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    #send-btn:hover {
+        background-color: #0056b3;
+    }
+    .circle {
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        background-color: black;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 99999999;
+        transition: transform 0.2s, left 0.1s, top 0.1s;
+      }
     </style>
 </head>
 <body>
+    <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+  <div class="circle"></div>
+    <div class="black-overlay"></div>
 
-    <!-- Dark overlay for background image -->
-    <div class="overlay"></div>
-
-    <!-- Header with links -->
-    <div class="header">
-        <a href="https://www.depauw.edu">DEPAUW UNIVERSITY</a>
-        <a href="passenger.html">PASSENGER</a>
-        <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a>
-        <a href="bicycle_rental.html">BIKE RENTAL</a>
-        <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a>
-        <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a>
-        <a href="ruraltransit.html">RURAL TRANSIT</a>
-        <a href="otherinformation.html">OTHER INFORMATION</a>
+    <!-- Parallax Sections -->
+    <section id="home"><!-- Main Content -->
+        <div class="main-content">
+            <h1>DEPAUW TRANSPORTATION SUPPORT</h1>
+            <button onclick="showPopup()">GO</button>
+        </div></section>
+        <section id="passenger">
+            <h1 class="hidden">Welcome to the PASSENGER Section</h1>
+            <p class="hidden">Find reliable and convenient transport options tailored to your needs. Whether commuting to work, exploring new destinations, or running errands, we have you covered. Browse routes, schedules, and pricing to make your journey smooth and enjoyable.</p>
+          </section>
+          
+          <section id="studentDrivers">
+            <h1 class="hidden">Welcome to the STUDENT DRIVERS Section</h1>
+            <p class="hidden">Are you a student looking to gain driving experience? Join our Student Drivers program to build your skills, access resources, and find mentorship opportunities. Start your journey toward becoming a confident and responsible driver today!</p>
+          </section>
+          
+          <section id="bikeRental">
+            <h1 class="hidden">Welcome to the BIKE RENTAL Section</h1>
+            <p class="hidden">Discover the joy of cycling! Rent a bike to explore your surroundings, stay active, and reduce your carbon footprint. We offer flexible rental plans and a variety of bike models to suit your needs, from casual rides to adventurous trails.</p>
+          </section>
+          
+          <section id="localDriverAccount">
+            <h1 class="hidden">Welcome to the LOCAL DRIVER CREATE ACCOUNT Section</h1>
+            <p class="hidden">Join our network of trusted local drivers. Sign up to create your account and start providing reliable transportation services in your community. Enjoy flexible working hours, competitive earnings, and support from our dedicated team.</p>
+          </section>
+          
+          <section id="localDriverLogin">
+            <h1 class="hidden">Welcome to the LOCAL DRIVER LOG IN Section</h1>
+            <p class="hidden">Access your driver dashboard to manage bookings, update your profile, and track your earnings. Log in now to stay connected and provide excellent service to passengers.</p>
+          </section>
+          
+          <section id="ruralTransit">
+            <h1 class="hidden">Welcome to the RURAL TRANSIT Section</h1>
+            <p class="hidden">Connecting rural communities with essential transportation services. Explore routes, schedules, and affordable options to make your trips convenient and hassle-free. Bringing the world closer, one ride at a time.</p>
+          </section>
+          
+          <section id="otherInfo">
+            <h1 class="hidden">Welcome to the OTHER INFORMATION Section</h1>
+            <p class="hidden">Looking for additional details or have questions? Visit this section for FAQs, contact information, policy updates, and more. We're here to ensure you have all the information you need at your fingertips.</p>
+          </section>
+          
+          
+    <!-- Tiger Eyes Character -->
+    <div class="container">
+        <img src="character.png" alt="Tiger Character" class="character">
+        <div class="eye eye1"><div class="pupil" id="pupil1"></div></div>
+        <div class="eye eye2"><div class="pupil" id="pupil2"></div></div>
     </div>
-    <!-- Main content with event information -->
-    <div class="main-content">
-        <h1>DEPAUW TRANSPORTATION SUPPORT</h1>
-        <button onclick="showPopup()">GO</button>
-    </div>
-
-    <!-- Side buttons -->
+    <!-- Side Buttons -->
     <div class="side-buttons">
         <a href="https://www.depauw.edu/admission-aid/visit-events">VISIT</a>
         <a href="https://www.depauw.edu/files/resources/dpu_campus-map_with-nature-park_1-22.pdf">CAMPUS MAP</a>
-        <a href="https://www.google.com/maps/dir/@39.6408054,-86.8722136,3572m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI0MTExMS4wIKXMDSoASAFQAw%3D%3D">LOCATION</a>
+        <a href="https://www.google.com/maps/dir/@39.6408054,-86.8722136,3572m/data=!3m1!1e3?entry=ttu">LOCATION</a>
         <a href="ruraltransit.html">RURAL TRANSIT</a>
     </div>
-
-    <!-- Bottom buttons -->
-    <div class="bottom-buttons">
+    <!-- Bottom Buttons -->
+    <div class="top-buttons">
         <a href="https://www.depauw.edu/admission-aid/visit-events">VISIT CAMPUS</a>
         <a href="https://www.depauw.edu/admission-aid/apply">APPLY</a>
         <a href="https://angelchube306.wixsite.com/depauw-transportat-1">AUTHOR</a>
     </div>
-
     <!-- Popup -->
     <div id="popup" class="popup-overlay">
         <div class="popup-box">
             <h2>Welcome to DePauw Transportation Support</h2>
             <p>This website provides a comprehensive solution for transportation needs. Here's a summary of the features:</p>
-            <ul>
-                <li>Classifications of all available transportation: Rural transits/local drivers.</li>
-                <li>Contact information for services.</li>
-                <li>
-                    <strong>Matching with Drivers</strong>
-                    <ul>
-                        <li>Drivers submit forms detailing their availability, locations, capacity, and preferences for roundtrip or one-way trips.</li>
-                        <li>Passengers share information about their travel time, group size, and trip preferences.</li>
-                        <li>Drivers transport passengers to their destinations under convenient and agreed-upon conditions.</li>                        
-                    </ul>
-                </li>
-                <li>
-                    <strong>Bicycle Rental:</strong>
-                    <ul>
-                        <li>Track available bicycles and provide safety equipment (e.g., helmets).</li>
-                        <li>Free rentals for specific time blocks; additional fees for extended usage.</li>
-                        <li>Schedule rentals in advance.</li>
-                    </ul>
-                </li>
-            </ul>
+        <ul>
+            <li>Classifications of available transportation: Rural transits/local drivers.</li>
+            <li>Contact information for services.</li>
+            <li>
+                Matching with Drivers:
+                <ul>
+                    <li>Drivers submit forms detailing their availability, locations, and trip preferences.</li>
+                    <li>Passengers share information about their travel time, group size, and preferences.</li>
+                    <li>Drivers transport passengers to destinations under agreed-upon conditions.</li>
+                </ul>
+            </li>
+            <li>
+                Bicycle Rental:
+                <ul>
+                    <li>Track available bicycles and provide safety equipment (e.g., helmets).</li>
+                    <li>Free rentals for specific time blocks; additional fees for extended usage.</li>
+                    <li>Schedule rentals in advance.</li>
+                </ul>
+            </li>
+        </ul>
             <button class="close-btn" onclick="closePopup()">Close</button>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <nav>
+        <a href="index.html">HOME</a> <!-- Link to the home page -->
+        <a href="passenger.html">PASSENGER</a> <!-- Link to passenger section -->
+        <a href="studentDrivers_driver_info.html">STUDENT DRIVERS</a> <!-- Link to student drivers section -->
+        <a href="bicycle_rental.html">BIKE RENTAL</a> <!-- Link to bike rental section -->
+        <a href="localDrivers_create-account.html">LOCAL DRIVER CREATE ACCOUNT</a> <!-- Link to local driver account creation -->
+        <a href="localDrivers_login.html">LOCAL DRIVER LOG IN</a> <!-- Link to local driver login -->
+        <a href="ruraltransit.html">RURAL TRANSIT</a> <!-- Link to rural transit section -->
+        <a href="otherinformation.html">OTHER INFORMATION</a> <!-- Link to other information -->
+        </nav>
+    </footer>
+
+    <!-- Tiger Eyes Script -->
     <script>
-        // Function to display the popup
+        const coords = { x: 0, y: 0 };
+    const circles = document.querySelectorAll(".circle");
+
+    const colors = [
+      "#ffb56b", "#fdaf69", "#f89d63", "#f59761", "#ef865e", "#ec805d",
+      "#e36e5c", "#df685c", "#d5585c", "#d1525c", "#c5415d", "#c03b5d",
+      "#b22c5e", "#ac265e", "#9c155f", "#950f5f", "#830060", "#7c0060",
+      "#680060", "#60005f", "#48005f", "#3d005e"
+    ];
+
+    circles.forEach(function (circle, index) {
+      circle.x = 0;
+      circle.y = 0;
+      circle.style.backgroundColor = colors[index % colors.length];
+    });
+
+    window.addEventListener("mousemove", function (e) {
+      coords.x = e.clientX;
+      coords.y = e.clientY;
+    });
+
+    function animateCircles() {
+      let x = coords.x;
+      let y = coords.y;
+
+      circles.forEach(function (circle, index) {
+        circle.style.left = x - 12 + "px";
+        circle.style.top = y - 12 + "px";
+        circle.style.transform = `scale(${(circles.length - index) / circles.length})`;
+
+        circle.x = x;
+        circle.y = y;
+
+        const nextCircle = circles[index + 1] || circles[0];
+        x += (nextCircle.x - x) * 0.5;
+        y += (nextCircle.y - y) * 0.5;
+      });
+
+      requestAnimationFrame(animateCircles);
+    }
+
+    animateCircles();
+        // Makes the tiger's pupils follow the mouse movement
+        const pupils = [document.getElementById('pupil1'), document.getElementById('pupil2')];
+        document.addEventListener('mousemove', (event) => {
+            const { clientX, clientY } = event;
+            pupils.forEach(pupil => {
+                const rect = pupil.parentElement.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const angle = Math.atan2(clientY - centerY, clientX - centerX);
+                pupil.style.transform = `translate(${Math.cos(angle) * 4}px, ${Math.sin(angle) * 6}px)`;
+            });
+        });
+    
+        // Displays the popup
         function showPopup() {
             document.getElementById('popup').style.display = 'block';
         }
-
-        // Function to hide the popup
+    
+        // Hides the popup
         function closePopup() {
             document.getElementById('popup').style.display = 'none';
         }
-    </script>
+    
+         // Chatbot Toggle Function
+    function toggleChatbot() {
+        const chatbot = document.getElementById('chatbot-box');
+        chatbot.style.display = chatbot.style.display === 'none' || !chatbot.style.display ? 'flex' : 'none';
+    }
 
+    // Chatbot Send Message Function
+    function sendMessage() {
+        const userInput = document.getElementById('user-input').value.trim().toLowerCase();
+        const messagesContainer = document.getElementById('chatbot-messages');
+
+        if (userInput !== '') {
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.style.margin = '5px 0';
+            userMessage.style.textAlign = 'right';
+            userMessage.innerHTML = `<div style="display: inline-block; background-color: #007bff; color: white; padding: 10px; border-radius: 10px;">${userInput}</div>`;
+            messagesContainer.appendChild(userMessage);
+
+            // Determine bot response
+            let botResponse = "I'm not sure how to respond to that. Can you ask something else?";
+            if (userInput.includes('hello') || userInput.includes('hi')) {
+                botResponse = "Hello! How can I assist you today?";
+            } else if (userInput.includes('hours') || userInput.includes('open')) {
+                botResponse = "Our hours of operation are 9 AM to 5 PM, Monday to Friday.";
+            } else if (userInput.includes('contact') || userInput.includes('phone')) {
+                botResponse = "You can reach us at (123) 456-7890 or email us at support@depauw.edu.";
+            } else if (userInput.includes('location')) {
+                botResponse = "We are located at 123 University Lane, Greencastle, IN.";
+            } else if (userInput.includes('help')) {
+                botResponse = "Sure! I'm here to assist. Please provide more details.";
+            }
+
+            // Add bot response
+            const botMessage = document.createElement('div');
+            botMessage.style.margin = '5px 0';
+            botMessage.style.textAlign = 'left';
+            setTimeout(() => {
+                botMessage.innerHTML = `<div style="display: inline-block; background-color: #f1f1f1; padding: 10px; border-radius: 10px;">${botResponse}</div>`;
+                messagesContainer.appendChild(botMessage);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+
+            // Clear input
+            document.getElementById('user-input').value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+    // Add "Enter" key listener to the input field
+    document.getElementById('user-input').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+            event.preventDefault(); // Prevents default form submission   if the input is in a form
+        }
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+        const hiddenElements = document.querySelectorAll(".hidden");
+      
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              observer.unobserve(entry.target); // Stop observing once visible
+            }
+          });
+        }, {
+          threshold: 0.1 // Trigger when 10% of the element is visible
+        });
+      
+        hiddenElements.forEach(element => observer.observe(element));
+      });
+      
+    </script>
+    
+    <div id="chatbot-box" class="chatbot">
+        <div id="chatbot-header">
+            <h3>Chat with Us</h3>
+            <button id="chatbot-close" onclick="toggleChatbot()">×</button>
+        </div>
+        <div id="chatbot-body">
+            <div id="chatbot-messages"></div>
+            <div id="chatbot-input">
+                <input type="text" id="user-input" placeholder="Type your message..." />
+                <button id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Toggle Button -->
+    <button onclick="toggleChatbot()" style="position: fixed; bottom: 60px; left: 75px; background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; z-index: 1000; cursor: pointer;">
+        Chat With DePauw
+    </button>
 </body>
 </html>
